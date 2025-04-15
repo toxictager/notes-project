@@ -331,60 +331,32 @@ class NoteTakingApp:
             self.status_var.set("Note saved")
     
     def add_note(self):
-        """Add a new note."""
-        selected = self.notes_tree.selection()
-        parent_id = selected[0] if selected else ""
-        
+        """add a new note"""
+        #save current note
+        self.save_current_note()
+
         note_name = simpledialog.askstring("New Note", "Enter note name:")
         if not note_name:
             return
         
-        # Save current note content before adding new one
-        self.save_current_note()
+        #check if not with same name exists at root level
+        if note_name in self.note_structure:
+            messagebox.showerror("Error", "A note with this name already exists!")
+            return
         
-        if parent_id:
-            # Add as a child of selected note
-            parent_path = self.get_note_path(parent_id)
-            parent = self.get_note_by_path(parent_path)
-            
-            # Check if note with same name exists
-            if note_name in parent.get("children", {}):
-                messagebox.showerror("Error", "A note with this name already exists here!")
-                return
-            
-            # Ensure parent has children dict
-            if not isinstance(parent, dict):
-                parent = {"children": {}}
-                self.set_note_at_path(parent_path, parent)
-            
-            if "children" not in parent:
-                parent["children"] = {}
-            
-            # Add the new note
-            parent["children"][note_name] = {"children": {}}
-            
-            # Save empty content for new note
-            new_path = parent_path + [note_name]
-            self.save_note_content(note_name, "", parent_path)
-        else:
-            # Add as a root note
-            if note_name in self.note_structure:
-                messagebox.showerror("Error", "A note with this name already exists!")
-                return
-            
-            # Add to root structure
-            self.note_structure[note_name] = {"children": {}}
-            
-            # Save empty content for new note
-            self.save_note_content(note_name, "")
-        
-        # Save the updated structure
+        #add to root structure
+        self.note_structure[note_name] = {"children":{}}
+
+        #save empty note
+        self.save_note_content(note_name, "")
+
+        #save updated structure
         self.save_note_structure()
         self.populate_tree()
         
-        # Select the new note
-        self.select_note_by_name(note_name, parent_id)
-    
+        #select new note
+        self.select_note_by_name(note_name)
+       
     def set_note_at_path(self, path, note_data):
         """Set note data at the given path."""
         current = self.note_structure
@@ -408,11 +380,45 @@ class NoteTakingApp:
     
     def add_subnote(self):
         """Add a subnote to the selected note."""
-        if not self.notes_tree.selection():
+        selected = self.notes_tree.selection()
+        if not selected:
             messagebox.showerror("Error", "Please select a note first!")
             return
-        self.add_note()
-    
+        parent_id = selected[0]
+        parent_path = self.get_note_path(parent_id)
+        parent = self.get_note_by_path(parent_path)
+        
+        note_name = simpledialog.askstring("New Subnote", "Enter subnote name:")
+        if not note_name:
+            return
+        
+        #Save current note content before adding new one
+        self.save_current_note()
+
+        # Check if note with same name exists
+        if note_name in parent.get("children", {}):
+          messagebox.showerror("Error", "A note with this name already exists here!")
+          return
+        #Ensure parent has children dict
+        if not isinstance(parent, dict):
+            parent = {"children": {}}
+            self.set_note_at_path(parent_path, parent)
+        
+        if "children" not in parent:
+            parent["children"] = {}
+        
+        #add the note
+        parent["children"][note_name] = {"children": {}}
+
+        #save empty content
+        self.save_note_content(note_name, "", parent_path)
+
+        #save updated structure
+        self.save_note_structure()
+        self.populate_tree()
+        #select note
+        self.select_note_by_name(note_name, parent_id)
+
     def rename_note(self):
         """Rename the selected note."""
         if not self.notes_tree.selection():
