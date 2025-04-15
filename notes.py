@@ -8,9 +8,9 @@ import sys
 import subprocess
 
 
-CURRENT_VERSION = "1.0.2"  # Change this when you build a new version
-VERSION_URL = "https://raw.githubusercontent.com/toxictager/myapp-updates/refs/heads/main/version.txt"
-UPDATE_URL = "https://github.com/toxictager/myapp-updates/raw/main/notes.exe"
+CURRENT_VERSION = "1.5.0"  # Change this when you build a new version
+VERSION_URL = "https://raw.githubusercontent.com/toxictager/note-exe/refs/heads/main/versions.txt"
+UPDATE_URL = "https://github.com/toxictager/note-exe/raw/main/notes.exe"
 
 def check_for_update():
     try:
