@@ -33,7 +33,7 @@ python main.py
 💻 Download the .EXE Version
 If you don't want to install Python or run the code manually, you can download the ready-to-use Windows executable here:
 
-👉 Download NotesApp [.exe file](https://github.com/toxictager/note-exe)
+👉 [Download NotesApp (.exe)](https://github.com/toxictager/note-exe/releases/latest)
 
 Download the ZIP
 
