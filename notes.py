@@ -8,14 +8,19 @@ import sys
 import subprocess
 
 
-CURRENT_VERSION = "1.5.0"  # Change this when you build a new version
+CURRENT_VERSION = "1.6.0"  # Change this when you build a new version
 VERSION_URL = "https://raw.githubusercontent.com/toxictager/note-exe/refs/heads/main/versions.txt"
-UPDATE_URL = "https://github.com/toxictager/note-exe/raw/main/notes.exe"
+UPDATE_URL = "https://raw.githubusercontent.com/toxictager/note-exe/main/notes.exe"
 
 def check_for_update():
     try:
         latest_version = requests.get(VERSION_URL).text.strip()
-        if latest_version != CURRENT_VERSION:
+        # Convert versions to tuples for proper comparison
+        current_version_tuple = tuple(map(int, CURRENT_VERSION.split('.')))
+        latest_version_tuple = tuple(map(int, latest_version.split('.')))
+        
+        # Compare as tuples - this properly handles semantic versioning
+        if latest_version_tuple > current_version_tuple:
             answer = messagebox.askyesno("Update Available", f"A new version ({latest_version}) is available. Update now?")
             if answer:
                 perform_update()
